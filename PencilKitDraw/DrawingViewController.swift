@@ -5,9 +5,10 @@ Abstract:
 `DrawingViewController` is the primary view controller for showing drawings.
 */
 
-/// `PKCanvasView` is the main drawing view that you will add to your view hierarchy. By default,
-/// you can draw with a finger (and use two fingers to scroll). If `allowsFingerDrawing` is set
-/// to `false`, then you can only draw with a pencil, and one finger will scroll.
+///`PKCanvasView` is the main drawing view that you will add to your view hierarchy.
+/// The drawingPolicy dictates whether drawing with a finger is allowed.  If it's set to default and if the tool picker is visible,
+/// then it will respect the global finger pencil toggle in Settings or as set in the tool picker.  Otherwise, only drawing with
+/// a pencil is allowed.
 
 /// You can add your own class as a delegate of PKCanvasView to receive notifications after a user
 /// has drawn or the drawing was updated. You can also set the tool or toggle the ruler on the canvas.
@@ -17,15 +18,13 @@ Abstract:
 /// in compact size class. To listen to tool picker notifications, add yourself as an observer.
 
 /// Tool picker visibility is based on first responders. To make the tool picker appear, you need to
-/// associated the tool picker with a `UIResponder` object, such as a view, by invoking the method
+/// associate the tool picker with a `UIResponder` object, such as a view, by invoking the method
 /// `UIToolpicker.setVisible(_:forResponder:)`, and then by making that responder become the first
 
 /// Best practices:
-
-/// -- When possible, avoid vibrancy in views shown over a PKCanvasView as this will affect pencil latency.
-
+///
 /// -- Because the tool picker palette is floating and moveable for regular size classes, but fixed to the
-/// bottom in compact, make sure to listen to the tool picker's obscured frame and adjust your UI accordingly.
+/// bottom in compact size classes, make sure to listen to the tool picker's obscured frame and adjust your UI accordingly.
 
 /// -- For regular size classes, the palette has undo and redo buttons, but not for compact size classes.
 /// Make sure to provide your own undo and redo buttons when in a compact size class.
@@ -36,10 +35,15 @@ import PencilKit
 class DrawingViewController: UIViewController, PKCanvasViewDelegate, PKToolPickerObserver, UIScreenshotServiceDelegate {
     
     @IBOutlet weak var canvasView: PKCanvasView!
-    @IBOutlet weak var pencilFingerBarButtonItem: UIBarButtonItem!
     @IBOutlet var undoBarButtonitem: UIBarButtonItem!
     @IBOutlet var redoBarButtonItem: UIBarButtonItem!
     
+    var toolPicker: PKToolPicker!
+    var signDrawingItem: UIBarButtonItem!
+    
+    /// On iOS 14.0, this is no longer necessary as the finger vs pencil toggle is a global setting in the toolpicker
+    var pencilFingerBarButtonItem: UIBarButtonItem!
+
     /// Standard amount of overscroll allowed in the canvas.
     static let canvasOverscrollHeight: CGFloat = 500
     
@@ -48,7 +52,6 @@ class DrawingViewController: UIViewController, PKCanvasViewDelegate, PKToolPicke
     
     /// Private drawing state.
     var drawingIndex: Int = 0
-    var signatureGestureRecognizer: UITapGestureRecognizer!
     var hasModifiedDrawing = false
     
     // MARK: View Life Cycle
@@ -61,24 +64,36 @@ class DrawingViewController: UIViewController, PKCanvasViewDelegate, PKToolPicke
         canvasView.delegate = self
         canvasView.drawing = dataModelController.drawings[drawingIndex]
         canvasView.alwaysBounceVertical = true
-        canvasView.allowsFingerDrawing = false
         
-        // Set up the tool picker, using the window of our parent because our view has not
-        // been added to a window yet.
-        if let window = parent?.view.window, let toolPicker = PKToolPicker.shared(for: window) {
-            toolPicker.setVisible(true, forFirstResponder: canvasView)
-            toolPicker.addObserver(canvasView)
-            toolPicker.addObserver(self)
-            
-            updateLayout(for: toolPicker)
-            canvasView.becomeFirstResponder()
+        // Set up the tool picker
+        if #available(iOS 14.0, *) {
+            toolPicker = PKToolPicker()
+        } else {
+            // Set up the tool picker, using the window of our parent because our view has not
+            // been added to a window yet.
+            let window = parent?.view.window
+            toolPicker = PKToolPicker.shared(for: window!)
         }
         
-        // Add a gesture recognizer that allows the user to sign the drawing by
-        // tapping on the canvas with a finger.
-        signatureGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.signDrawing(_:)))
-        signatureGestureRecognizer.allowedTouchTypes = [UITouch.TouchType.direct.rawValue as NSNumber]
-        canvasView.addGestureRecognizer(signatureGestureRecognizer)
+        toolPicker.setVisible(true, forFirstResponder: canvasView)
+        toolPicker.addObserver(canvasView)
+        toolPicker.addObserver(self)
+        updateLayout(for: toolPicker)
+        canvasView.becomeFirstResponder()
+        
+        // Add a button to sign the drawing in the bottom right hand corner of the page
+        signDrawingItem = UIBarButtonItem(title: "Sign Drawing", style: .plain, target: self, action: #selector(signDrawing(sender:)))
+        navigationItem.rightBarButtonItems?.append(signDrawingItem)
+        
+        // Before iOS 14, add a button to toggle finger drawing.
+        if #available(iOS 14.0, *) { } else {
+            pencilFingerBarButtonItem = UIBarButtonItem(title: "Enable Finger Drawing",
+                                                        style: .plain,
+                                                        target: self,
+                                                        action: #selector(toggleFingerPencilDrawing(_:)))
+            navigationItem.rightBarButtonItems?.append(pencilFingerBarButtonItem)
+            canvasView.allowsFingerDrawing = false
+        }
         
         // Always show a back button.
         navigationItem.leftItemsSupplementBackButton = true
@@ -121,10 +136,13 @@ class DrawingViewController: UIViewController, PKCanvasViewDelegate, PKToolPicke
     
     // MARK: Actions
     
-    /// Action method: Turn finger drawing on or off.
+    /// Action method: Turn finger drawing on or off, but only on devices before iOS 14.0
     @IBAction func toggleFingerPencilDrawing(_ sender: Any) {
-        canvasView.allowsFingerDrawing.toggle()
-        pencilFingerBarButtonItem.title = canvasView.allowsFingerDrawing ? "Finger" : "Pencil"
+        if #available(iOS 14.0, *) { } else {
+            canvasView.allowsFingerDrawing.toggle()
+            let title = canvasView.allowsFingerDrawing ? "Disable Finger Drawing" : "Enable Finger Drawing"
+            pencilFingerBarButtonItem.title = title
+        }
     }
     
     /// Helper method to set a new drawing, with an undo action to go back to the old one.
@@ -137,22 +155,22 @@ class DrawingViewController: UIViewController, PKCanvasViewDelegate, PKToolPicke
     }
     
     /// Action method: Add a signature to the current drawing.
-    @IBAction func signDrawing(_ gesture: UITapGestureRecognizer) {
+    @IBAction func signDrawing(sender: UIBarButtonItem) {
         
         // Get the signature drawing at the canvas scale.
         var signature = dataModelController.signature
         let signatureBounds = signature.bounds
-        let loc = gesture.location(in: canvasView)
+        let loc = CGPoint(x: canvasView.bounds.maxX, y: canvasView.bounds.maxY)
         let scaledLoc = CGPoint(x: loc.x / canvasView.zoomScale, y: loc.y / canvasView.zoomScale)
-        signature.transform(CGAffineTransform(translationX: scaledLoc.x - signatureBounds.midX, y: scaledLoc.y - signatureBounds.midY))
-        
+        signature.transform(using: CGAffineTransform(translationX: scaledLoc.x - signatureBounds.maxX, y: scaledLoc.y - signatureBounds.maxY))
+
         // Add the signature drawing to the current canvas drawing.
         setNewDrawingUndoable(canvasView.drawing.appending(signature))
     }
     
     // MARK: Navigation
     
-    /// Setup the signature view controller.
+    /// Set up the signature view controller.
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         (segue.destination as? SignatureViewController)?.dataModelController = dataModelController
     }

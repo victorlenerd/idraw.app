@@ -26,6 +26,11 @@ class SignatureViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        if #available(iOS 14.0, *) {
+            // Both finger and pencil are always allowed on this canvas.
+            canvasView.drawingPolicy = .anyInput
+        }
+        
         // Get the signature drawing from the data model.
         canvasView.drawing = dataModelController.signature
         colorChanged(self)

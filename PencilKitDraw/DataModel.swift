@@ -176,7 +176,7 @@ class DataModelController {
         }
     }
     
-    /// Construct initial an data model when no data model already exists.
+    /// Construct an initial data model when no data model already exists.
     private func loadDefaultDrawings() -> DataModel {
         var testDataModel = DataModel()
         for sampleDataName in DataModel.defaultDrawingNames {
