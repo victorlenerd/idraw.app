@@ -132,7 +132,7 @@ class DataModelController {
     private var saveURL: URL {
         let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
         let documentsDirectory = paths.first!
-        return documentsDirectory.appendingPathComponent("PencilKitDraw.data")
+        return documentsDirectory.appendingPathComponent("iDraw.data")
     }
     
     /// Save the data model to persistent storage.
