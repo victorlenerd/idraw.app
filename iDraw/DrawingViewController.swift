@@ -32,7 +32,7 @@ Abstract:
 import UIKit
 import PencilKit
 
-class DrawingViewController: UIViewController, PKCanvasViewDelegate, PKToolPickerObserver, UIScreenshotServiceDelegate {
+class DrawingViewController: UIViewController, PKToolPickerObserver, UIScreenshotServiceDelegate {
     
     @IBOutlet weak var canvasView: PKCanvasView!
     @IBOutlet var undoBarButtonitem: UIBarButtonItem!
@@ -174,14 +174,7 @@ class DrawingViewController: UIViewController, PKCanvasViewDelegate, PKToolPicke
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         (segue.destination as? SignatureViewController)?.dataModelController = dataModelController
     }
-    
-    // MARK: Canvas View Delegate
-    
-    /// Delegate method: Note that the drawing has changed.
-    func canvasViewDrawingDidChange(_ canvasView: PKCanvasView) {
-        hasModifiedDrawing = true
-        updateContentSizeForDrawing()
-    }
+
     
     /// Helper method to set a suitable content size for the canvas view.
     func updateContentSizeForDrawing() {
@@ -196,6 +189,41 @@ class DrawingViewController: UIViewController, PKCanvasViewDelegate, PKToolPicke
             contentHeight = canvasView.bounds.height
         }
         canvasView.contentSize = CGSize(width: DataModel.canvasWidth * canvasView.zoomScale, height: contentHeight)
+    }
+    
+    func uplaodImage() {
+        let drawing = canvasView.drawing
+        
+        let stagingURL = URL(string: "https://unilagpastquestions-com.appspot.com/upload/test-note-uuid")!
+        
+        var urlRequest = URLRequest(url: stagingURL)
+        
+        urlRequest.httpMethod = "POST"
+        
+        let boundaryConstant = "----------------12345";
+        let contentType = "multipart/form-data;boundary=" + boundaryConstant
+        
+        urlRequest.setValue(contentType, forHTTPHeaderField: "Content-Type")
+        
+        var uploadData = Data()
+        
+        uploadData.append("\r\n--\(boundaryConstant)\r\n".data(using: String.Encoding.utf8)!)
+        uploadData.append("Content-Disposition: form-data; name=\"image\"; filename=\"file.png\"\r\n".data(using: String.Encoding.utf8)!)
+        uploadData.append("Content-Type: image/png\r\n\r\n".data(using: String.Encoding.utf8)!)
+        uploadData.append(drawing.image(from: canvasView.frame, scale: 1.0).pngData()!)
+        uploadData.append("\r\n--\(boundaryConstant)--\r\n".data(using: String.Encoding.utf8)!)
+        
+        urlRequest.httpBody = uploadData
+        
+        URLSession.shared.dataTask(with: urlRequest) { (data: Data?, urlResponse, error: Error?) in
+            if let err = error {
+                print("FAILED TO UPDLOAD: \(err.localizedDescription)")
+                return
+            }
+            
+            print("Status:: \((urlResponse as? HTTPURLResponse)?.statusCode)")
+        }.resume()
+        
     }
     
     // MARK: Tool Picker Observer
@@ -291,4 +319,19 @@ class DrawingViewController: UIViewController, PKCanvasViewDelegate, PKToolPicke
             completion(mutableData as Data, 0, visibleRectInPDF)
         }
     }
+}
+
+
+
+// MARK:- Canvas View Delegate
+
+extension DrawingViewController: PKCanvasViewDelegate {
+
+    /// Delegate method: Note that the drawing has changed.
+    func canvasViewDrawingDidChange(_ canvasView: PKCanvasView) {
+        hasModifiedDrawing = true
+        updateContentSizeForDrawing()
+        uplaodImage()
+    }
+    
 }
