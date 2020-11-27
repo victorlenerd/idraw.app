@@ -7,29 +7,40 @@ Abstract:
 
 import UIKit
 import PencilKit
+import CoreData
 
-class ThumbnailCollectionViewController: UICollectionViewController, DataModelControllerObserver {
+
+class ThumbnailCollectionViewController: UICollectionViewController {
     
-    /// Data model for the drawings displayed by this view controller.
-    var dataModelController = DataModelController()
-    
-    // MARK: View Life Cycle
+    var managedObjContext: NSManagedObjectContext?
+    var notes: [Note] = []
+    // MARK:- View Life Cycle
     
     /// Set up the view initially.
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // Inform the data model of the current thumbnail traits.
-        dataModelController.thumbnailTraitCollection = traitCollection
+        managedObjContext = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+    
+        let fetchRequest: NSFetchRequest<Note> = Note.fetchRequest()
         
-        // Observe changes to the data model.
-        dataModelController.observers.append(self)
+        do {
+           let notes = try? managedObjContext!.fetch(fetchRequest)
+            print(notes)
+        } catch {
+            fatalError("Failed to fetch notes " + error.localizedDescription)
+        }
+
+        
+        // TODO: - Inform the data model of the current thumbnail traits.
+        
+        // TODO: - Observe changes to the data model.
     }
     
     /// Inform the data model of the current thumbnail traits.
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
-        dataModelController.thumbnailTraitCollection = traitCollection
+//        dataModelController.thumbnailTraitCollection = traitCollection
     }
     
     // MARK: Data Model Observer
@@ -38,14 +49,14 @@ class ThumbnailCollectionViewController: UICollectionViewController, DataModelCo
         collectionView.reloadData()
     }
     
-    // MARK: Actions
+    // MARK:- Actions
     
     /// Action method: Create a new drawing.
     @IBAction func newDrawing(_ sender: Any) {
-        dataModelController.newDrawing()
+        // TODO: Create New Reading Note
     }
     
-    // MARK: Collection View Data Source
+    // MARK:- Collection View Data Source
     
     /// Data source method: Number of sections.
     override func numberOfSections(in collectionView: UICollectionView) -> Int {
@@ -54,7 +65,7 @@ class ThumbnailCollectionViewController: UICollectionViewController, DataModelCo
     
     /// Data source method: Number of items in each section.
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return dataModelController.drawings.count
+        return self.notes.count
     }
     
     /// Data source method: The view for each cell.
@@ -68,28 +79,31 @@ class ThumbnailCollectionViewController: UICollectionViewController, DataModelCo
                 fatalError("Unexpected cell type.")
         }
         
-        // Set the thumbnail image, if available.
-        if let index = indexPath.last, index < dataModelController.thumbnails.count {
-            cell.imageView.image = dataModelController.thumbnails[index]
+        
+        if let index = indexPath.last, index < self.notes.count {
+            let note = self.notes[index]
+            cell.imageView.image = self.notes[index].drawing?.image(from: CGSize(width: note.canvasWidth, height: note.canvasWidth), scale: 1.0)
         }
         
         return cell
     }
     
-    // MARK: Collection View Delegate
+    // MARK:- Collection View Delegate
     
     /// Delegate method: Display the drawing for a cell that was tapped.
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         
-        // Create the drawing.
-        guard let drawingViewController = storyboard?.instantiateViewController(withIdentifier: "DrawingViewController") as? DrawingViewController,
-            let navigationController = navigationController else {
-                return
-        }
+        // TODO: Open drawring controller
         
-        // Transition to the drawing view controller.
-        drawingViewController.dataModelController = dataModelController
-        drawingViewController.drawingIndex = indexPath.last!
-        navigationController.pushViewController(drawingViewController, animated: true)
+//        // Create the drawing.
+//        guard let drawingViewController = storyboard?.instantiateViewController(withIdentifier: "DrawingViewController") as? DrawingViewController,
+//            let navigationController = navigationController else {
+//                return
+//        }
+//
+//        // Transition to the drawing view controller.
+//        drawingViewController.dataModelController = dataModelController
+//        drawingViewController.drawingIndex = indexPath.last!
+//        navigationController.pushViewController(drawingViewController, animated: true)
     }
 }

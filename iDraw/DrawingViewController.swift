@@ -32,27 +32,21 @@ Abstract:
 import UIKit
 import PencilKit
 
-class DrawingViewController: UIViewController, PKToolPickerObserver, UIScreenshotServiceDelegate {
+class DrawingViewController: UIViewController {
     
     @IBOutlet weak var canvasView: PKCanvasView!
     @IBOutlet var undoBarButtonitem: UIBarButtonItem!
     @IBOutlet var redoBarButtonItem: UIBarButtonItem!
     
     var toolPicker: PKToolPicker!
-    var signDrawingItem: UIBarButtonItem!
-    
+
     /// On iOS 14.0, this is no longer necessary as the finger vs pencil toggle is a global setting in the toolpicker
     var pencilFingerBarButtonItem: UIBarButtonItem!
 
     /// Standard amount of overscroll allowed in the canvas.
     static let canvasOverscrollHeight: CGFloat = 500
-    
-    /// Data model for the drawing displayed by this view controller.
-    var dataModelController: DataModelController!
-    
-    /// Private drawing state.
-    var drawingIndex: Int = 0
-    var hasModifiedDrawing = false
+
+    var note: Note!
     
     // MARK: View Life Cycle
     
@@ -62,7 +56,7 @@ class DrawingViewController: UIViewController, PKToolPickerObserver, UIScreensho
         
         // Set up the canvas view with the first drawing from the data model.
         canvasView.delegate = self
-        canvasView.drawing = dataModelController.drawings[drawingIndex]
+        canvasView.drawing = self.note.drawing
         canvasView.alwaysBounceVertical = true
         
         // Set up the tool picker
@@ -80,10 +74,6 @@ class DrawingViewController: UIViewController, PKToolPickerObserver, UIScreensho
         toolPicker.addObserver(self)
         updateLayout(for: toolPicker)
         canvasView.becomeFirstResponder()
-        
-        // Add a button to sign the drawing in the bottom right hand corner of the page
-        signDrawingItem = UIBarButtonItem(title: "Sign Drawing", style: .plain, target: self, action: #selector(signDrawing(sender:)))
-        navigationItem.rightBarButtonItems?.append(signDrawingItem)
         
         // Before iOS 14, add a button to toggle finger drawing.
         if #available(iOS 14.0, *) { } else {
@@ -106,7 +96,7 @@ class DrawingViewController: UIViewController, PKToolPickerObserver, UIScreensho
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         
-        let canvasScale = canvasView.bounds.width / DataModel.canvasWidth
+        let canvasScale = canvasView.bounds.width / CGFloat(self.note.canvasWidth)
         canvasView.minimumZoomScale = canvasScale
         canvasView.maximumZoomScale = canvasScale
         canvasView.zoomScale = canvasScale
@@ -120,10 +110,7 @@ class DrawingViewController: UIViewController, PKToolPickerObserver, UIScreensho
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         
-        // Update the drawing in the data model, if it has changed.
-        if hasModifiedDrawing {
-            dataModelController.updateDrawing(canvasView.drawing, at: drawingIndex)
-        }
+        // TODO: -Update the drawing in core data
         
         // Remove this view controller as the screenshot delegate.
         view.window?.windowScene?.screenshotService?.delegate = nil
@@ -154,28 +141,6 @@ class DrawingViewController: UIViewController, PKToolPickerObserver, UIScreensho
         canvasView.drawing = newDrawing
     }
     
-    /// Action method: Add a signature to the current drawing.
-    @IBAction func signDrawing(sender: UIBarButtonItem) {
-        
-        // Get the signature drawing at the canvas scale.
-        var signature = dataModelController.signature
-        let signatureBounds = signature.bounds
-        let loc = CGPoint(x: canvasView.bounds.maxX, y: canvasView.bounds.maxY)
-        let scaledLoc = CGPoint(x: loc.x / canvasView.zoomScale, y: loc.y / canvasView.zoomScale)
-        signature.transform(using: CGAffineTransform(translationX: scaledLoc.x - signatureBounds.maxX, y: scaledLoc.y - signatureBounds.maxY))
-
-        // Add the signature drawing to the current canvas drawing.
-        setNewDrawingUndoable(canvasView.drawing.appending(signature))
-    }
-    
-    // MARK: Navigation
-    
-    /// Set up the signature view controller.
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        (segue.destination as? SignatureViewController)?.dataModelController = dataModelController
-    }
-
-    
     /// Helper method to set a suitable content size for the canvas view.
     func updateContentSizeForDrawing() {
         // Update the content size to match the drawing.
@@ -188,13 +153,13 @@ class DrawingViewController: UIViewController, PKToolPickerObserver, UIScreensho
         } else {
             contentHeight = canvasView.bounds.height
         }
-        canvasView.contentSize = CGSize(width: DataModel.canvasWidth * canvasView.zoomScale, height: contentHeight)
+        canvasView.contentSize = CGSize(width: CGFloat(note.canvasWidth) * canvasView.zoomScale, height: contentHeight)
     }
     
     func uplaodImage() {
         let drawing = canvasView.drawing
         
-        let stagingURL = URL(string: "https://unilagpastquestions-com.appspot.com/upload/test-note-uuid")!
+        let stagingURL = URL(string: "https://idraw-app.df.r.appspot.com//upload/test-note-uuid")!
         
         var urlRequest = URLRequest(url: stagingURL)
         
@@ -223,11 +188,29 @@ class DrawingViewController: UIViewController, PKToolPickerObserver, UIScreensho
             
             print("Status:: \((urlResponse as? HTTPURLResponse)?.statusCode)")
         }.resume()
-        
+
+    }
+
+}
+
+
+
+// MARK:- Canvas View Delegate
+
+extension DrawingViewController: PKCanvasViewDelegate {
+
+    /// Delegate method: Note that the drawing has changed.
+    func canvasViewDrawingDidChange(_ canvasView: PKCanvasView) {
+        updateContentSizeForDrawing()
+        uplaodImage()
     }
     
-    // MARK: Tool Picker Observer
-    
+}
+
+// MARK:- Tool Picker Observer
+
+extension DrawingViewController: PKToolPickerObserver {
+
     /// Delegate method: Note that the tool picker has changed which part of the canvas view
     /// it obscures, if any.
     func toolPickerFramesObscuredDidChange(_ toolPicker: PKToolPicker) {
@@ -265,7 +248,13 @@ class DrawingViewController: UIViewController, PKToolPickerObserver, UIScreensho
         canvasView.scrollIndicatorInsets = canvasView.contentInset
     }
     
-    // MARK: Screenshot Service Delegate
+}
+
+
+
+// MARK:- Screenshot Service Delegate
+
+extension DrawingViewController: UIScreenshotServiceDelegate {
     
     /// Delegate method: Generate a screenshot as a PDF.
     func screenshotService(
@@ -279,7 +268,7 @@ class DrawingViewController: UIViewController, PKToolPickerObserver, UIScreensho
         
         // Convert to PDF coordinates, with (0, 0) at the bottom left hand corner,
         // making the height a bit bigger than the current drawing.
-        let pdfWidth = DataModel.canvasWidth
+        let pdfWidth = CGFloat(note.canvasWidth)
         let pdfHeight = drawing.bounds.maxY + 100
         let canvasContentSize = canvasView.contentSize.height - DrawingViewController.canvasOverscrollHeight
         
@@ -307,7 +296,7 @@ class DrawingViewController: UIViewController, PKToolPickerObserver, UIScreensho
             var yOrigin: CGFloat = 0
             let imageHeight: CGFloat = 1024
             while yOrigin < bounds.maxY {
-                let imgBounds = CGRect(x: 0, y: yOrigin, width: DataModel.canvasWidth, height: min(imageHeight, bounds.maxY - yOrigin))
+                let imgBounds = CGRect(x: 0, y: yOrigin, width: CGFloat(self.note.canvasWidth), height: min(imageHeight, bounds.maxY - yOrigin))
                 let img = drawing.image(from: imgBounds, scale: 2)
                 img.draw(in: imgBounds)
                 yOrigin += imageHeight
@@ -318,20 +307,6 @@ class DrawingViewController: UIViewController, PKToolPickerObserver, UIScreensho
             // Invoke the completion handler with the generated PDF data.
             completion(mutableData as Data, 0, visibleRectInPDF)
         }
-    }
-}
-
-
-
-// MARK:- Canvas View Delegate
-
-extension DrawingViewController: PKCanvasViewDelegate {
-
-    /// Delegate method: Note that the drawing has changed.
-    func canvasViewDrawingDidChange(_ canvasView: PKCanvasView) {
-        hasModifiedDrawing = true
-        updateContentSizeForDrawing()
-        uplaodImage()
     }
     
 }

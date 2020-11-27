@@ -8,22 +8,22 @@
 
 /* Begin PBXBuildFile section */
 		DA4FD8922278E5F5000FE6C3 /* ThumbnailCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA4FD8912278E5F5000FE6C3 /* ThumbnailCollectionViewController.swift */; };
-		DA4FD8AE2278F074000FE6C3 /* DataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA4FD8AD2278F074000FE6C3 /* DataModel.swift */; };
 		DA67042F22946742004011A1 /* iDrawNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DADCBC1A2290DEB300236FA7 /* iDrawNavigationController.swift */; };
 		DAB023A82278AC4C005102E6 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAB023A72278AC4C005102E6 /* AppDelegate.swift */; };
 		DAB023AA2278AC4C005102E6 /* DrawingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAB023A92278AC4C005102E6 /* DrawingViewController.swift */; };
 		DAB023AD2278AC4C005102E6 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DAB023AB2278AC4C005102E6 /* Main.storyboard */; };
 		DAB023AF2278AC4E005102E6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DAB023AE2278AC4E005102E6 /* Assets.xcassets */; };
 		DAB023B22278AC4E005102E6 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DAB023B02278AC4E005102E6 /* LaunchScreen.storyboard */; };
-		DAB860E9227CE6DA009C9B1D /* SignatureViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAB860E8227CE6DA009C9B1D /* SignatureViewController.swift */; };
 		DAC481D5227A1AA10076D01F /* ThumbnailCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAC481D4227A1AA10076D01F /* ThumbnailCollectionViewCell.swift */; };
+		E7728C76257085660019B2BA /* iDraw.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = E7728C74257085660019B2BA /* iDraw.xcdatamodeld */; };
+		E7728C9E2570AA850019B2BA /* Note+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7728C9C2570AA850019B2BA /* Note+CoreDataClass.swift */; };
+		E7728C9F2570AA850019B2BA /* Note+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7728C9D2570AA850019B2BA /* Note+CoreDataProperties.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		9C720C209C7206E000000001 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		A25CD8C54A0072C566C38370 /* SampleCode.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = SampleCode.xcconfig; path = Configuration/SampleCode.xcconfig; sourceTree = "<group>"; };
 		DA4FD8912278E5F5000FE6C3 /* ThumbnailCollectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThumbnailCollectionViewController.swift; sourceTree = "<group>"; };
-		DA4FD8AD2278F074000FE6C3 /* DataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataModel.swift; sourceTree = "<group>"; };
 		DAB023A42278AC4C005102E6 /* iDraw.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iDraw.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		DAB023A72278AC4C005102E6 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		DAB023A92278AC4C005102E6 /* DrawingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrawingViewController.swift; sourceTree = "<group>"; };
@@ -31,9 +31,11 @@
 		DAB023AE2278AC4E005102E6 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		DAB023B12278AC4E005102E6 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		DAB023B32278AC4E005102E6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		DAB860E8227CE6DA009C9B1D /* SignatureViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignatureViewController.swift; sourceTree = "<group>"; };
 		DAC481D4227A1AA10076D01F /* ThumbnailCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThumbnailCollectionViewCell.swift; sourceTree = "<group>"; };
 		DADCBC1A2290DEB300236FA7 /* iDrawNavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iDrawNavigationController.swift; sourceTree = "<group>"; };
+		E7728C75257085660019B2BA /* Model.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Model.xcdatamodel; sourceTree = "<group>"; };
+		E7728C9C2570AA850019B2BA /* Note+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Note+CoreDataClass.swift"; sourceTree = SOURCE_ROOT; };
+		E7728C9D2570AA850019B2BA /* Note+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Note+CoreDataProperties.swift"; sourceTree = SOURCE_ROOT; };
 		FCCEC7DD1662ACB7482D13A5 /* LICENSE.txt */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = LICENSE.txt; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -70,19 +72,28 @@
 		DAB023A62278AC4C005102E6 /* iDraw */ = {
 			isa = PBXGroup;
 			children = (
+				E7728C78257085B10019B2BA /* Models */,
 				DAB023A72278AC4C005102E6 /* AppDelegate.swift */,
-				DA4FD8AD2278F074000FE6C3 /* DataModel.swift */,
 				DADCBC1A2290DEB300236FA7 /* iDrawNavigationController.swift */,
 				DA4FD8912278E5F5000FE6C3 /* ThumbnailCollectionViewController.swift */,
 				DAC481D4227A1AA10076D01F /* ThumbnailCollectionViewCell.swift */,
 				DAB023A92278AC4C005102E6 /* DrawingViewController.swift */,
-				DAB860E8227CE6DA009C9B1D /* SignatureViewController.swift */,
 				DAB023AB2278AC4C005102E6 /* Main.storyboard */,
 				DAB023AE2278AC4E005102E6 /* Assets.xcassets */,
 				DAB023B02278AC4E005102E6 /* LaunchScreen.storyboard */,
 				DAB023B32278AC4E005102E6 /* Info.plist */,
+				E7728C74257085660019B2BA /* iDraw.xcdatamodeld */,
 			);
 			path = iDraw;
+			sourceTree = "<group>";
+		};
+		E7728C78257085B10019B2BA /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				E7728C9C2570AA850019B2BA /* Note+CoreDataClass.swift */,
+				E7728C9D2570AA850019B2BA /* Note+CoreDataProperties.swift */,
+			);
+			path = Models;
 			sourceTree = "<group>";
 		};
 		EFD965ED53A9A9A376DB13BA /* LICENSE */ = {
@@ -173,12 +184,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				DAB023AA2278AC4C005102E6 /* DrawingViewController.swift in Sources */,
+				E7728C9F2570AA850019B2BA /* Note+CoreDataProperties.swift in Sources */,
+				E7728C9E2570AA850019B2BA /* Note+CoreDataClass.swift in Sources */,
 				DA67042F22946742004011A1 /* iDrawNavigationController.swift in Sources */,
 				DAB023A82278AC4C005102E6 /* AppDelegate.swift in Sources */,
+				E7728C76257085660019B2BA /* iDraw.xcdatamodeld in Sources */,
 				DA4FD8922278E5F5000FE6C3 /* ThumbnailCollectionViewController.swift in Sources */,
 				DAC481D5227A1AA10076D01F /* ThumbnailCollectionViewCell.swift in Sources */,
-				DAB860E9227CE6DA009C9B1D /* SignatureViewController.swift in Sources */,
-				DA4FD8AE2278F074000FE6C3 /* DataModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -390,6 +402,19 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		E7728C74257085660019B2BA /* iDraw.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				E7728C75257085660019B2BA /* Model.xcdatamodel */,
+			);
+			currentVersion = E7728C75257085660019B2BA /* Model.xcdatamodel */;
+			path = iDraw.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = DAB0239C2278AC4C005102E6 /* Project object */;
 }
