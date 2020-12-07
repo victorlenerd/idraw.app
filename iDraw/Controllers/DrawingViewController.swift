@@ -49,25 +49,16 @@ class DrawingViewController: UIViewController {
     
     /// Standard amount of overscroll allowed in the canvas.
     static let canvasOverscrollHeight: CGFloat = 500
-
-    var noteUUID: UUID!
     var note: Note!
     
     // MARK: View Life Cycle
-    override func viewDidLoad() {
-        let fetchRequest: NSFetchRequest<Note> = Note.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "uuid == %@", self.noteUUID.uuidString)
-        let results = try? self.dataController.viewContext.fetch(fetchRequest)
-
-        note = results?.first
-    }
     
     /// Set up the drawing initially.
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
         // Set up the canvas view with the first drawing from the data model.
-        canvasView.drawing = PKDrawing()
+        canvasView.drawing = try! PKDrawing(data: note.drawing!)
         canvasView.delegate = self
         canvasView.alwaysBounceVertical = true
         
@@ -102,14 +93,6 @@ class DrawingViewController: UIViewController {
         
         // Set this view controller as the delegate for creating full screenshots.
         parent?.view.window?.windowScene?.screenshotService?.delegate = self
-    }
-    
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        
-        if let drawing = self.note.drawing {
-            self.canvasView.drawing = try! PKDrawing(data: drawing)
-        }
     }
     
     /// When the view is resized, adjust the canvas scale so that it is zoomed to the default `canvasWidth`.

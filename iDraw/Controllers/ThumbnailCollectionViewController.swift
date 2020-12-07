@@ -101,7 +101,7 @@ class ThumbnailCollectionViewController: UICollectionViewController {
         }
         
         drawingViewController.dataController = dataController
-        drawingViewController.noteUUID = self.fetchResultsController.fetchedObjects?[indexPath.item].uuid
+        drawingViewController.note = self.fetchResultsController.fetchedObjects?[indexPath.item]
         navigationController.pushViewController(drawingViewController, animated: true)
     }
 }
