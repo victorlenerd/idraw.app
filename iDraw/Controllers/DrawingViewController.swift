@@ -31,6 +31,8 @@ Abstract:
 
 import UIKit
 import PencilKit
+import CoreData
+
 
 class DrawingViewController: UIViewController {
     
@@ -42,21 +44,31 @@ class DrawingViewController: UIViewController {
 
     /// On iOS 14.0, this is no longer necessary as the finger vs pencil toggle is a global setting in the toolpicker
     var pencilFingerBarButtonItem: UIBarButtonItem!
-
+    
+    var dataController: DataController!
+    
     /// Standard amount of overscroll allowed in the canvas.
     static let canvasOverscrollHeight: CGFloat = 500
 
+    var noteUUID: UUID!
     var note: Note!
     
     // MARK: View Life Cycle
+    override func viewDidLoad() {
+        let fetchRequest: NSFetchRequest<Note> = Note.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "uuid == %@", self.noteUUID.uuidString)
+        let results = try? self.dataController.viewContext.fetch(fetchRequest)
+
+        note = results?.first
+    }
     
     /// Set up the drawing initially.
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
         // Set up the canvas view with the first drawing from the data model.
+        canvasView.drawing = PKDrawing()
         canvasView.delegate = self
-        canvasView.drawing = self.note.drawing
         canvasView.alwaysBounceVertical = true
         
         // Set up the tool picker
@@ -92,11 +104,19 @@ class DrawingViewController: UIViewController {
         parent?.view.window?.windowScene?.screenshotService?.delegate = self
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        if let drawing = self.note.drawing {
+            self.canvasView.drawing = try! PKDrawing(data: drawing)
+        }
+    }
+    
     /// When the view is resized, adjust the canvas scale so that it is zoomed to the default `canvasWidth`.
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         
-        let canvasScale = canvasView.bounds.width / CGFloat(self.note.canvasWidth)
+        let canvasScale = canvasView.bounds.width / CGFloat(768)
         canvasView.minimumZoomScale = canvasScale
         canvasView.maximumZoomScale = canvasScale
         canvasView.zoomScale = canvasScale
@@ -109,9 +129,6 @@ class DrawingViewController: UIViewController {
     /// When the view is removed, save the modified drawing, if any.
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        
-        // TODO: -Update the drawing in core data
-        
         // Remove this view controller as the screenshot delegate.
         view.window?.windowScene?.screenshotService?.delegate = nil
     }
@@ -138,6 +155,7 @@ class DrawingViewController: UIViewController {
         undoManager?.registerUndo(withTarget: self) {
             $0.setNewDrawingUndoable(oldDrawing)
         }
+        
         canvasView.drawing = newDrawing
     }
     
@@ -201,8 +219,8 @@ extension DrawingViewController: PKCanvasViewDelegate {
 
     /// Delegate method: Note that the drawing has changed.
     func canvasViewDrawingDidChange(_ canvasView: PKCanvasView) {
-        updateContentSizeForDrawing()
-        uplaodImage()
+        note.drawing = canvasView.drawing.dataRepresentation()
+        dataController.saveViewContext()
     }
     
 }

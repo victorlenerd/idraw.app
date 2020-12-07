@@ -15,9 +15,11 @@
 		DAB023AF2278AC4E005102E6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DAB023AE2278AC4E005102E6 /* Assets.xcassets */; };
 		DAB023B22278AC4E005102E6 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DAB023B02278AC4E005102E6 /* LaunchScreen.storyboard */; };
 		DAC481D5227A1AA10076D01F /* ThumbnailCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAC481D4227A1AA10076D01F /* ThumbnailCollectionViewCell.swift */; };
+		E71B3E78257A7945009D1E71 /* ThumbnailController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E71B3E77257A7945009D1E71 /* ThumbnailController.swift */; };
+		E71B3E7D257BC2E1009D1E71 /* Note+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = E71B3E7B257BC2E1009D1E71 /* Note+CoreDataClass.swift */; };
+		E71B3E7E257BC2E1009D1E71 /* Note+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = E71B3E7C257BC2E1009D1E71 /* Note+CoreDataProperties.swift */; };
+		E71B3E83257BCF21009D1E71 /* DataController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E71B3E82257BCF21009D1E71 /* DataController.swift */; };
 		E7728C76257085660019B2BA /* iDraw.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = E7728C74257085660019B2BA /* iDraw.xcdatamodeld */; };
-		E7728C9E2570AA850019B2BA /* Note+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7728C9C2570AA850019B2BA /* Note+CoreDataClass.swift */; };
-		E7728C9F2570AA850019B2BA /* Note+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7728C9D2570AA850019B2BA /* Note+CoreDataProperties.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -33,9 +35,11 @@
 		DAB023B32278AC4E005102E6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		DAC481D4227A1AA10076D01F /* ThumbnailCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThumbnailCollectionViewCell.swift; sourceTree = "<group>"; };
 		DADCBC1A2290DEB300236FA7 /* iDrawNavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iDrawNavigationController.swift; sourceTree = "<group>"; };
+		E71B3E77257A7945009D1E71 /* ThumbnailController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThumbnailController.swift; sourceTree = "<group>"; };
+		E71B3E7B257BC2E1009D1E71 /* Note+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Note+CoreDataClass.swift"; sourceTree = SOURCE_ROOT; };
+		E71B3E7C257BC2E1009D1E71 /* Note+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Note+CoreDataProperties.swift"; sourceTree = SOURCE_ROOT; };
+		E71B3E82257BCF21009D1E71 /* DataController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataController.swift; sourceTree = "<group>"; };
 		E7728C75257085660019B2BA /* Model.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Model.xcdatamodel; sourceTree = "<group>"; };
-		E7728C9C2570AA850019B2BA /* Note+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Note+CoreDataClass.swift"; sourceTree = SOURCE_ROOT; };
-		E7728C9D2570AA850019B2BA /* Note+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Note+CoreDataProperties.swift"; sourceTree = SOURCE_ROOT; };
 		FCCEC7DD1662ACB7482D13A5 /* LICENSE.txt */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = LICENSE.txt; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -72,26 +76,44 @@
 		DAB023A62278AC4C005102E6 /* iDraw */ = {
 			isa = PBXGroup;
 			children = (
+				E71B3E76257A7911009D1E71 /* Views */,
+				E71B3E75257A7907009D1E71 /* Controllers */,
 				E7728C78257085B10019B2BA /* Models */,
 				DAB023A72278AC4C005102E6 /* AppDelegate.swift */,
-				DADCBC1A2290DEB300236FA7 /* iDrawNavigationController.swift */,
-				DA4FD8912278E5F5000FE6C3 /* ThumbnailCollectionViewController.swift */,
-				DAC481D4227A1AA10076D01F /* ThumbnailCollectionViewCell.swift */,
-				DAB023A92278AC4C005102E6 /* DrawingViewController.swift */,
 				DAB023AB2278AC4C005102E6 /* Main.storyboard */,
 				DAB023AE2278AC4E005102E6 /* Assets.xcassets */,
 				DAB023B02278AC4E005102E6 /* LaunchScreen.storyboard */,
 				DAB023B32278AC4E005102E6 /* Info.plist */,
-				E7728C74257085660019B2BA /* iDraw.xcdatamodeld */,
 			);
 			path = iDraw;
+			sourceTree = "<group>";
+		};
+		E71B3E75257A7907009D1E71 /* Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				DADCBC1A2290DEB300236FA7 /* iDrawNavigationController.swift */,
+				DA4FD8912278E5F5000FE6C3 /* ThumbnailCollectionViewController.swift */,
+				DAB023A92278AC4C005102E6 /* DrawingViewController.swift */,
+				E71B3E77257A7945009D1E71 /* ThumbnailController.swift */,
+				E71B3E82257BCF21009D1E71 /* DataController.swift */,
+			);
+			path = Controllers;
+			sourceTree = "<group>";
+		};
+		E71B3E76257A7911009D1E71 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				DAC481D4227A1AA10076D01F /* ThumbnailCollectionViewCell.swift */,
+			);
+			path = Views;
 			sourceTree = "<group>";
 		};
 		E7728C78257085B10019B2BA /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				E7728C9C2570AA850019B2BA /* Note+CoreDataClass.swift */,
-				E7728C9D2570AA850019B2BA /* Note+CoreDataProperties.swift */,
+				E71B3E7B257BC2E1009D1E71 /* Note+CoreDataClass.swift */,
+				E71B3E7C257BC2E1009D1E71 /* Note+CoreDataProperties.swift */,
+				E7728C74257085660019B2BA /* iDraw.xcdatamodeld */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -183,14 +205,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E71B3E78257A7945009D1E71 /* ThumbnailController.swift in Sources */,
 				DAB023AA2278AC4C005102E6 /* DrawingViewController.swift in Sources */,
-				E7728C9F2570AA850019B2BA /* Note+CoreDataProperties.swift in Sources */,
-				E7728C9E2570AA850019B2BA /* Note+CoreDataClass.swift in Sources */,
 				DA67042F22946742004011A1 /* iDrawNavigationController.swift in Sources */,
 				DAB023A82278AC4C005102E6 /* AppDelegate.swift in Sources */,
 				E7728C76257085660019B2BA /* iDraw.xcdatamodeld in Sources */,
+				E71B3E83257BCF21009D1E71 /* DataController.swift in Sources */,
+				E71B3E7D257BC2E1009D1E71 /* Note+CoreDataClass.swift in Sources */,
 				DA4FD8922278E5F5000FE6C3 /* ThumbnailCollectionViewController.swift in Sources */,
 				DAC481D5227A1AA10076D01F /* ThumbnailCollectionViewCell.swift in Sources */,
+				E71B3E7E257BC2E1009D1E71 /* Note+CoreDataProperties.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

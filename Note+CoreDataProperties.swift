@@ -2,7 +2,7 @@
 //  Note+CoreDataProperties.swift
 //  iDraw
 //
-//  Created by Nwaokocha Victor on 2020-11-26.
+//  Created by Nwaokocha Victor on 2020-12-05.
 //  Copyright © 2020 Apple. All rights reserved.
 //
 //
@@ -17,10 +17,11 @@ extension Note {
         return NSFetchRequest<Note>(entityName: "Note")
     }
 
-    @NSManaged public var uuid: String?
-    @NSManaged public var drawing: PKDrawing?
-    @NSManaged public var canvasWidth: Double
     @NSManaged public var canvasHeight: Double
+    @NSManaged public var canvasWidth: Double
+    @NSManaged public var dateModified: Date?
+    @NSManaged public var drawing: Data?
+    @NSManaged public var uuid: UUID?
 
 }
 

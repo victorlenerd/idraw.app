@@ -2,7 +2,7 @@
 //  Note+CoreDataClass.swift
 //  iDraw
 //
-//  Created by Nwaokocha Victor on 2020-11-26.
+//  Created by Nwaokocha Victor on 2020-12-05.
 //  Copyright © 2020 Apple. All rights reserved.
 //
 //
