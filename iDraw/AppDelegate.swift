@@ -14,12 +14,33 @@ The application delegate maintains the app's life cycle.
 
 import UIKit
 import CoreData
-
+import PencilKit
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
     
     var window: UIWindow?
+    
+    let dataController = DataController()
+    
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+        
+        if UserDefaults.standard.bool(forKey: "isFirstLaunch") == false {
+            
+            if let data = NSDataAsset(name: "Notes")?.data {
+                let defaultNote = Note(context: dataController.viewContext)
+                defaultNote.uuid = UUID()
+                defaultNote.drawing = data
+                defaultNote.canvasWidth = Double(dataController.canvasWidth)
+            }
+
+            dataController.saveViewContext()
+
+            UserDefaults.standard.set(true, forKey: "isFirstLaunch")
+        }
+        
+        return true
+    }
         
 }
 

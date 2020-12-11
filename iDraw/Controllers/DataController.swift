@@ -6,10 +6,15 @@
 //  Copyright © 2020 Apple. All rights reserved.
 //
 
+import UIKit
 import Foundation
 import CoreData
 
 class DataController {
+    
+    let canvasWidth: CGFloat = 768
+    
+    let thumbnailSize = CGSize(width: 192, height: 256)
     
     let persistentContainer:NSPersistentContainer
     

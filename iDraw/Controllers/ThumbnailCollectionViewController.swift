@@ -18,9 +18,7 @@ typealias DataSource = UICollectionViewDiffableDataSource<Section, Note>
 class ThumbnailCollectionViewController: UICollectionViewController {
     
     /// The width used for drawing canvases.
-    let canvasWidth: CGFloat = 768
-    let thumbnailSize = CGSize(width: 192, height: 256)
-    let dataController = DataController()
+    var dataController: DataController!
         
     var collectionViewDataSource: UICollectionViewDiffableDataSource<Section, Note>!
     var diffableDataSourceSnapshot: NSDiffableDataSourceSnapshot<Section, Note>!
@@ -31,7 +29,9 @@ class ThumbnailCollectionViewController: UICollectionViewController {
     /// Set up the view initially.
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        dataController =  (UIApplication.shared.delegate as! AppDelegate).dataController
+
+    
         let fetchRequest: NSFetchRequest<Note> = Note.fetchRequest()
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: "dateModified", ascending: true)]
         
@@ -86,9 +86,9 @@ class ThumbnailCollectionViewController: UICollectionViewController {
         defaultNote.uuid = UUID()
         defaultNote.dateModified = Date()
         defaultNote.drawing = newDrawing.dataRepresentation()
-        defaultNote.canvasWidth = Double(canvasWidth)
+        defaultNote.canvasWidth = Double(dataController.canvasWidth)
         
-        try? dataController.saveViewContext()
+        dataController.saveViewContext()
     }
         
     // MARK:- Collection View Delegate

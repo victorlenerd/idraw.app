@@ -187,7 +187,7 @@ class DrawingViewController: UIViewController {
                 return
             }
             
-            print("Status:: \((urlResponse as? HTTPURLResponse)?.statusCode)")
+            print("Status:: \(String(describing: (urlResponse as? HTTPURLResponse)?.statusCode))")
         }.resume()
 
     }
